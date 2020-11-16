@@ -1,0 +1,30 @@
+name: Building Binder
+
+on:
+  push:
+    branches: 
+      - master
+  workflow_dispatch:
+
+jobs:
+  update_templates:
+    name: "Update README"
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, 'Classroom')
+    steps:
+      - name: "📥  Fetching Repository Contents"
+        uses: actions/checkout@main
+
+      - name: "💾  Github Repository Metadata"
+        continue-on-error: true
+        uses: varunsridharan/action-repository-meta@f4a5c2260eb8d40e461ee26e848abfa2a457bc67
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "💫  Dynamic Template Render"
+        uses: varunsridharan/action-dynamic-readme@3a2d065fa8c49b880f22cafcdd239a5a5b655733
+        with:
+          files: |
+            README.md=README.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
